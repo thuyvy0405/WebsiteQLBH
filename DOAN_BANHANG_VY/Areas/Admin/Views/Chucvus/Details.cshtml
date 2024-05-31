@@ -1,0 +1,39 @@
+﻿@model DOAN_BANHANG_VY.Models.Chucvu
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="pagetitle">
+    <h1>Chi tiết chức vụ</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="index">Chức vụ</a></li>
+            <li class="breadcrumb-item active">Xem chi tiết</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+<section class="section dashboard">
+
+<div>
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Ten)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Ten)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.HeSo)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.HeSo)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a class="btn btn-info" asp-action="Edit" asp-route-id="@Model?.Macv">Chỉnh sửa</a> |
+    <a asp-action="Index">Quay về danh sách</a>
+</div>
+</section>

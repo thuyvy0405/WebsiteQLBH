@@ -1,0 +1,226 @@
+﻿@model DOAN_BANHANG_VY.Models.Hoadon
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="pagetitle">
+    <h1>Thêm mới hóa đơn</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="index">Hóa đơn</a></li>
+            <li class="breadcrumb-item active">Thêm mới</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+<section class="section dashboard">
+<div class="row">
+    <div class="col-md-3">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                  
+                        <label asp-for="Ngay" class="control-label"></label>
+                        @{
+                            // Lấy ngày hiện tại
+                            DateTime currentDate = DateTime.Now;
+                            // Định dạng ngày tháng năm (dd/MM/yyyy) và gán vào input
+                            string formattedDate = currentDate.ToString("dd/MM/yyyy");
+                        }
+                    <input asp-for="Ngay" class="form-control" data-provide="datepicker" data-date-format="dd/mm/yyyy" value="@formattedDate" />
+                        <span asp-validation-for="Ngay" class="text-danger"></span>
+             </div>
+            <div class="form-group">
+                <label asp-for="TongTien" class="control-label"></label>
+                <input asp-for="TongTien" class="form-control" />
+                <span asp-validation-for="TongTien" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaKh" class="control-label"></label>
+                <select asp-for="MaKh" class ="form-control" asp-items="ViewBag.MaKh"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="TrangThai" class="control-label"></label>
+                    <select asp-for="TrangThai" class="form-control">
+                        <option value="0">Chưa xác nhận</option>
+                        <option value="1">Xác nhận</option>
+                        <option value="2">Đang giao hàng</option>
+                        <option value="3">Đã giao hàng</option>
+                        <option value="4">Đơn hàng đã bị hủy bởi khách hàng</option>
+                        <option value="5">Đơn hàng đã bị hủy bởi cửa hàng</option>
+                    </select>
+                <span asp-validation-for="TrangThai" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Lưu" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+    <div class="col-md-9">
+            <div class="row">
+                <div class="col-md-4">
+                    <label for="searchProduct">Tìm kiếm:</label>
+                    <input type="text" id="searchProduct" oninput="filterProducts()" placeholder="Nhập để tìm kiếm sản phẩm..." class="form-control">
+                </div>
+                <div class="col-md-8">
+                    <ul id="productList" class="mh-50" style="display: none;">
+                        <div class="overflow-auto  bg-light"
+                             style="max-width: 100%; max-height: 300px;">
+                            <code>
+                                @foreach (var item in ViewBag.DSSP)
+                                {
+                                    <!-- Your product list items will go here -->
+                                <li class="product-item" data-productname="@item.Ten">
+                                <div class="row">
+                                    <div class="col-md-4">
+
+                                        <img src="~/images/sanpham/@item.HinhAnh" style="width:100px; height:130px" />
+                                    </div>
+                                    <div class="col-md-4">
+                                           @item.Ten
+                                    </div>
+                                    <div class="col-md-4">
+                                        @if(item.GiaBan != item.GiaGoc)
+                                        {
+                                            @item.GiaBan.ToString("N0")
+                                         }
+                                         else
+                                         {
+                                             @item.GiaGoc.ToString("N0")
+                                         }
+                                         đ
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-8"></div>
+                                    <div class="col-md-4">
+                                        <form asp-action="AddToCart" asp-route-id="@item.MaMh">
+                                            <div class="form-group">
+                                                <input name="MaKH" class="form-control" type="hidden" id="id_an" />
+                                                <input name="ngaytao" class="form-control" type="hidden" id="ngay_an"/>
+                                            </div>
+                                            <input type="submit" class="btn btn-success" value="Chọn"/>
+                                        </form>
+                                    </div>
+
+                                </div>
+                            </li>
+                           }
+                        </code>
+                </div>
+                </ul>
+            </div>
+        </div>
+
+
+        <script>
+            function filterProducts() {
+                var input, filter, ul, li, i, txtValue;
+                input = document.getElementById("searchProduct");
+                filter = input.value.toUpperCase();
+                ul = document.getElementById("productList");
+                li = ul.getElementsByClassName("product-item");
+
+                // Toggle the visibility of the product list based on user input
+                ul.style.display = filter.length > 0 ? "block" : "none";
+
+                for (i = 0; i < li.length; i++) {
+                    txtValue = li[i].getAttribute("data-productname");
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        li[i].style.display = "";
+                    } else {
+                        li[i].style.display = "none";
+                    }
+                }
+            }
+        </script>
+    </div>
+</div>
+
+
+<div class="col-md-12">
+        <h4 class="text-info">Thông tin đơn hàng</h4>
+        <table class="table">
+            <tr>
+                <th>STT</th>
+                <th>Tên hàng</th>
+                <th>Giá bán</th>
+                <th>Số lượng</th>
+                <th>Thành tiền</th>
+            </tr>
+            @if (ViewBag.CART != null)
+            {
+                int stt = 1;
+                int thanhtien = 0;
+                int tongtien = 0;
+                @foreach (var i in ViewBag.CART)
+                {
+                    thanhtien = i.Mathang.GiaBan * i.soluong;
+                    tongtien += thanhtien;
+                    <tr>
+                        <td>
+                            @(stt++)
+                        </td>
+                        <td>
+                            @i.Mathang.Ten
+                        </td>
+                        <td>
+                            @(i.Mathang.GiaBan.ToString("n0")) VNĐ
+                        </td>
+                        <td>
+                            <form asp-action="UpdateItem" method="post" asp-route-id="@i.Mathang.MaMh">
+                                <div class="row">
+                                    <div class="col">
+                                        <input name="quantity" type="number" class="form-control" value="@i.soluong"/>
+                                    </div>
+                                    <div class="col">
+                                        <input class="btn btn-warning" type="submit" value="Cập nhật" />
+                                    </div>
+                                </div>
+                            </form>
+                        </td>
+                        <td>
+                            @(thanhtien.ToString("n0")) VNĐ
+                        </td>
+                        <td>
+                            <a asp-asp-controller="Home" asp-action="RemoveItem" asp-route-id="@i.Mathang.MaMh" class="btn btn-danger">Xóa</a>
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td colspan="4" class="text-end fw-bold"> Thành tiền</td>
+                    <td colspan="2"><strong class="text-danger">@(tongtien.ToString("n0")) VNĐ</strong></td>
+                </tr>
+            }
+        </table>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Lấy giá trị mặc định của MaKh và gán vào id_an
+            var defaultMaKhValue = $('select[name="MaKh"]').val();
+            console.log(defaultMaKhValue);
+            $('#id_an').val(defaultMaKhValue);
+
+            // Theo dõi sự thay đổi của trường Ngay
+            $('input[name="Ngay"]').on('change', function () {
+                var ngayValue = $(this).val();
+                $('#ngay_an').val(ngayValue);
+            });
+
+            // Theo dõi sự thay đổi của trường MaKh
+            $('select[name="MaKh"]').on('change', function () {
+                var maKhValue = $(this).val();
+                $('#id_an').val(maKhValue);
+            });
+        });
+    </script>
+
+<div>
+    <a asp-action="Index">Quay về danh sách</a>
+</div>
+</section>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

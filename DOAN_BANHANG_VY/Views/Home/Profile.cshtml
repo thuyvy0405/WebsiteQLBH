@@ -1,0 +1,458 @@
+﻿@model Khachhang
+
+@{
+    ViewData["Title"] = "Thông tin cá nhân";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@if (ViewBag.ShowSuccessMessage != null && ViewBag.ShowSuccessMessage)
+{
+    <div id="success-alert" class="alert alert-success" role="alert">
+        @ViewBag.SuccessMessage
+    </div>
+    <script>
+        // Tự động ẩn thông báo sau 3 giây
+        setTimeout(function () {
+            $('#success-alert').fadeOut('slow');
+        }, 3000);
+    </script>
+}
+<div class="container mt-5">
+    <!-- Information Section -->
+    <section id="information">
+        <h2 class="mb-4">Thông cá nhân</h2>
+        <form asp-action="capnhatthongtin">
+            <p class="text-success">@TempData["SUCCESSINFO"]</p>
+            <div class="row">
+                <input asp-for="MaKh" type="hidden" value="@Model.MaKh" />
+                <input asp-for="MatKhau" type="hidden" value="@Model.MatKhau" />
+                <div class="col-md-4">
+                    <label asp-for="Ten"></label>
+                    <input asp-for="Ten" type="text" value="@Model.Ten" class="form-control" />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="Email"></label>
+                    <input asp-for="Email" type="email" value="@Model.Email" class="form-control" readonly />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="DienThoai"></label>
+                    <input asp-for="DienThoai" type="text" value="@Model.DienThoai" class="form-control" onblur="validatePhoneNumber()" />
+                </div>
+            </div>
+
+            <script>
+                function validateFullName() {
+                    var fullName = $('#Ten').val().trim();
+                    if (fullName.length < 2) {
+                        alert("Họ tên phải có ít nhất 3 ký tự.");
+                        return false;
+                    }
+                    return true;
+                }
+
+                function validatePhoneNumber() {
+                    var phoneNumber = $('#DienThoai').val().trim();
+                    // Remove non-numeric characters
+                    var numericPhoneNumber = phoneNumber.replace(/\D/g, '');
+
+                    // Check if the phone number is 10 or 11 digits
+                    if (numericPhoneNumber.length !== 10 && numericPhoneNumber.length !== 11) {
+                        alert("Số điện thoại phải có 10 hoặc 11 số.");
+                        return false;
+                    }
+
+                    return true;
+                }
+                function validateForm() {
+                    // Perform additional checks here before allowing the form submission
+                    if (!validateFullName()) {
+                        return false; // Prevent form submission
+                    }
+
+                    if (!validatePhoneNumber()) {
+                        return false; // Prevent form submission
+                    }
+
+                    // Add more validation checks if needed
+
+                    // If all checks pass, allow the form submission
+                    return true;
+                }
+            </script>
+
+            <div class="row ">
+                <div class="col-md-4 mt-2">
+                    <input type="submit" value="Cập nhật" class="btn btn-outline-info" onclick="return validateForm()" />
+                </div>
+            </div>
+        </form>
+        <form asp-action="capnhatpass" onsubmit="return validatePasswords()">
+            <p class="text-success">@TempData["SUCCESS"]</p>
+            <p class="text-danger">@TempData["ERROR"]</p>
+            <div class="row">
+                <div class="col-md-4">
+                    <label for="matkhaucu">Mật khẩu cũ</label>
+                    <input id="matkhaucu" name="matkhaucu" type="password" class="form-control" />
+                </div>
+                <div class="col-md-4">
+                    <label for="matkhaumoi">Mật khẩu mới</label>
+                    <input id="matkhaumoi" name="matkhaumoi" type="password" class="form-control" />
+                </div>
+                <div class="col-md-4">
+                    <label for="matkhauxacthuc">Nhập lại mật khẩu</label>
+                    <input id="matkhauxacthuc" name="matkhauxacthuc" type="password" class="form-control" />
+                    <p id="passwordMatchMessage" style="color: red;"></p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <input type="submit" class="btn btn-outline-info" value="Cập nhật" />
+                </div>
+            </div>
+        </form>
+
+        <script>
+            function validatePasswords() {
+                var oldPassword = document.getElementById('matkhaucu').value;
+                var newPassword = document.getElementById('matkhaumoi').value;
+                var confirmPassword = document.getElementById('matkhauxacthuc').value;
+                var messageElement = document.getElementById('passwordMatchMessage');
+                if (newPassword === "" || confirmPassword ==="" || oldPassword ==="") {
+                    alert('Vui lòng nhập đầy đủ thông tin (mật khẩu cũ, mật khẩu mới và mật khẩu xác nhận) !');
+                    return false; // Prevent form submission
+                }
+
+                if (newPassword !== confirmPassword) {
+                    messageElement.textContent = 'Mật khẩu mới không trùng khớp.';
+                    messageElement.style.color = 'red';
+                    return false; // Prevent form submission
+                }
+
+                // Additional validation logic for old password if needed
+
+                return true; // Allow form submission
+            }
+        </script>
+        
+    </section>
+
+    <!-- Orders Section -->
+    <section id="orders" class="mt-4">
+        <h2 class="mb-4">Đơn hàng của bạn</h2>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Mã đơn hàng</th>
+                        <th>Ngày mua</th>
+                        <th>Tổng tiền</th>
+                        <th>Trạng thái</th>
+                        <th></th>
+                        <th></th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                        @foreach( var item in ViewBag.DSDH)
+                        {
+                        <tr>
+
+                            <td>@item.MaHd</td>
+                            <td>@item.Ngay</td>
+                            <td>@item.TongTien.ToString("N0") đ</td>
+                            @if(item.TrangThai == 0)
+                            {
+                                <td class="text-bg-danger">Đơn hàng chưa xác nhận</td>
+                            }
+                            else if( item.TrangThai ==1)
+                            {
+                                <td class="text-bg-info">Đơn hàng đã xác nhận</td>
+                            }
+                            else if (item.TrangThai == 2)
+                            {
+                                <td class="text-bg-primary">Đơn hàng đang giao</td>
+                            }
+                            else if (item.TrangThai == 3)
+                            {
+                                <td>
+                                    <p class="text-bg-success">
+                                        Đơn hàng đã giao
+                                </p></td>
+                            }
+                            else
+                            {
+                                <td class="text-bg-danger">Đơn hàng bị hủy</td>
+                            }
+                            <td>
+                                <!-- Nút để mở modal -->
+                                <button class="btn btn-info" onclick="openProductModal('@item.MaHd')">
+                                    <i class="bi bi-eye-fill"></i> Xem chi tiết
+                                </button>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="@item.MaHd" tabindex="-1" role="dialog" aria-labelledby="productModalLabel@item.MaHd" aria-hidden="false" data-backdrop="static" data-keyboard="false">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="productModalLabel">Danh sách sản phẩm đã mua</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="cloesModal('@item.MaHd')">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body" id="productList">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <h6 class="text-info">Mã đơn hàng: @item.MaHd</h6>
+
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <h6 class="text-dark">Ngày đặt: @item.Ngay</h6>
+                                                    </div>
+                                                </div>   
+                                                
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Sản phẩm</th>
+                                                            <th>Số lượng mua</th>
+                                                            <th>Đơn giá</th>
+                                                            <th>Thành tiền</th>
+                                                            <th></th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                         @foreach (var sp in item.Cthoadons)
+                                                         {
+                                                            <tr>
+
+                                                                <td>@sp.MaMh</td>
+                                                                <td>@sp.Solung</td>
+                                                                <td>@sp.DonGia</td>
+                                                                <td>@sp.ThanhTien.ToString("N0") đ</td>
+                                                            </tr>
+                                                         }
+                                                    </tbody>
+                                                </table>
+                                                <div class="row">
+                                                    <div class="col-md-8">
+                                                        <h6 class="text-dark">Tổng tiền đơn hàng:</h6>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <h6 class="text-danger">@item.TongTien.ToString("N0") đ</h6>
+                                                    </div>
+                                                </div>
+                                      
+                                            </div>
+                                            <div class="modal-footer">
+                                                <div class="col-md-4">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="cloesModal('@item.MaHd')">Đóng</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </td>
+                            <td>
+                                @if (item.TrangThai == 0)
+                                {
+                                    <button class="btn btn-danger" onclick="openProductModalHuy('@item.MaHd-10')">
+                                        <i class="bi bi-x-circle-fill"></i> Hủy đơn hàng
+                                    </button>
+
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="@item.MaHd-10" tabindex="-1" role="dialog" aria-labelledby="productModalLabel@item.MaHd" aria-hidden="false" data-backdrop="static" data-keyboard="false">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title text-danger" id="productModalLabel">Hủy đơn hàng</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="cloesModalHuy('@item.MaHd-10')">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <form asp-action="CancelOrder" asp-route-id="@item.MaHd" onsubmit="return checkLydo()">
+
+                                                    <div class="modal-body" id="productList">
+
+                                                        <div class="row">                                               
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label>Lý do hủy:</label>
+
+                                                                    <textarea type="text" class="form-control" placeholder="Nhập lý do hủy đơn hàng của bạn..." name="lydo" id="lydo">
+
+                                                                    </textarea>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-4">
+                                                                <h6 class="text-info">Mã đơn hàng: @item.MaHd</h6>
+
+                                                            </div>
+                                                            <div class="col-md-8">
+                                                                <h6 class="text-dark">Ngày đặt: @item.Ngay</h6>
+                                                            </div>
+                                                        </div>
+                                                        <table class="table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Sản phẩm</th>
+                                                                    <th>Số lượng mua</th>
+                                                                    <th>Đơn giá</th>
+                                                                    <th>Thành tiền</th>
+                                                                    <th></th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @foreach (var sp in item.Cthoadons)
+                                                                {
+                                                                    <tr>
+
+                                                                        <td>@sp.MaMh</td>
+                                                                        <td>@sp.Solung</td>
+                                                                        <td>@sp.DonGia</td>
+                                                                        <td>@sp.ThanhTien.ToString("N0") đ</td>
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                        <div class="row">
+                                                            <div class="col-md-8">
+                                                                <h6 class="text-dark">Tổng tiền đơn hàng:</h6>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <h6 class="text-danger">@item.TongTien.ToString("N0") đ</h6>
+                                                            </div>
+                                                        </div>
+
+
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <div class="col-md-4">
+                                                            <button type="submit" class="btn btn-danger">
+                                                                <i class="bi bi-x-circle-fill"></i> Hủy đơn 
+                                                            </button>
+                                                        </div>
+                                                        <div class="col-md-4">
+          
+                                                            <button type="reset" class="btn btn-secondary" data-dismiss="modal" onclick="cloesModalHuy('@item.MaHd-10')">Đóng</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </td>
+
+                            <script>
+                                function checkLydo() {
+                                    var lydo = $('#lydo').val().trim(); // Trim leading and trailing whitespaces
+
+                                    if (lydo === "") {
+                                        alert("Vui lòng nhập lý do hủy đơn đặt hàng !");
+                                        return false;
+                                    }
+
+                                    return true;
+                                }
+                            </script>
+
+                         </tr>
+                        } 
+                  
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Addresses Section -->
+    <section id="addresses" class="mt-4">
+        <h2 class="mb-4">Địa chỉ của bạn</h2>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Tỉnh</th>
+                        <th>Quận huyện</th>
+                        <th>Xã phường</th>
+                        <th>Địa chỉ chi tiết</th>
+                        <th></th>
+                        <th></th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                     @foreach( var item in ViewBag.DSDC)
+                        {
+                        <tr>
+
+                            <td>@item.TinhThanh</td>
+                            <td>@item.QuanHuyen</td>
+                            <td>@item.PhuongXa</td>
+                            <td>@item.DiaChi1</td>
+                                @if (item.MacDinh == 0)
+                                {
+                                    <td>
+                                        <a asp-action="xoadiachi" asp-route-id="@item.MaDc" class="btn btn-outline-danger delete-btn">
+                                            <i class="bi bi-journal-x"></i>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a asp-action="diachimacdinh" asp-route-id="@item.MaDc" class="btn btn-outline-success success-btn">
+                                            <i class="bi bi-patch-check-fill"></i>
+                                        </a>
+                                    </td>
+
+                                }
+      
+                        </tr>                      
+                        }
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                            // Get the success button and delete button elements
+                            var successBtn = document.querySelector(".success-btn");
+                            var deleteBtn = document.querySelector(".delete-btn");
+                            var deleteTd = document.querySelector(".delete-td");
+
+                            // Add a click event listener to the success button
+                            successBtn.addEventListener("click", function () {
+                                // Hide the delete button when the success button is clicked
+                                deleteTd.style.display = "none";
+                            });
+                        });
+                    </script>
+                </tbody>
+            </table>
+        </div>
+        <div class="row">
+
+        </div>
+    </section>
+    <!-- Bootstrap JS and Popper.js (required for Bootstrap components) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        function openProductModal(maHd) {
+            var modalId = maHd;
+            $('#' + modalId).modal('show');
+        }
+        function cloesModal(maHd) {
+            var modalId = maHd;
+            $('#' + modalId).modal('hide');
+        }
+        function openProductModalHuy(maHd) {
+            console.log(maHd);
+            var modalId = maHd;
+            $('#' + modalId).modal('show');
+        }
+        function cloesModalHuy(maHd) {
+            console.log(maHd);
+
+            var modalId = maHd;
+            $('#' + modalId).modal('hide');
+        }
+    </script>
+
+</div>
+

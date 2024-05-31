@@ -1,0 +1,70 @@
+﻿<main id="main" class="main">
+
+    <div class="pagetitle">
+        <h1>DASHBOARD</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-action="index">DASHBOARD</a></li>
+                <li class="breadcrumb-item active">DASHBOARD</li>
+            </ol>
+        </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+
+                        <!-- Area Chart -->
+                        <script>
+                            document.addEventListener("DOMContentLoaded", async () => {
+                                const response = await fetch('/Hoadons/dashboard');
+                                const data = await response.json();
+
+                                const dates = data.map(entry => entry.Ngay); // Thay đổi theo tên thực tế của thuộc tính Ngay
+                                const prices = data.map(entry => entry.TongTien); // Thay đổi theo tên thực tế của thuộc tính TongTien
+
+                                new ApexCharts(document.querySelector("#areaChart"), {
+                                    series: [{
+                                        name: "Cửa hàng bán thiết bị điện",
+                                        data: prices
+                                    }],
+                                    chart: {
+                                        type: '',
+                                        height: 350,
+                                        zoom: {
+                                            enabled: false
+                                        }
+                                    },
+                                    dataLabels: {
+                                        enabled: false
+                                    },
+                                    stroke: {
+                                        curve: 'straight'
+                                    },
+                                    subtitle: {
+                                        text: 'Price Movements',
+                                        align: 'left'
+                                    },
+                                    labels: dates,
+                                    xaxis: {
+                                        type: 'datetime',
+                                    },
+                                    yaxis: {
+                                        opposite: true
+                                    },
+                                    legend: {
+                                        horizontalAlign: 'left'
+                                    }
+                                }).render();
+                            });
+
+                        </script>
+
+                    </div>
+                </div>
+            </div>
+
+
+</main><!-- End #main -->

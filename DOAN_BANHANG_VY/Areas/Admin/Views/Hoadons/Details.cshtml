@@ -1,0 +1,118 @@
+﻿@model DOAN_BANHANG_VY.Models.Hoadon
+
+@{
+    ViewData["Title"] = "Xem chi tiết hóa đơn";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="pagetitle">
+    <h1>Xem chi tiết</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="index">Hóa đơn</a></li>
+            <li class="breadcrumb-item active">Xem chi tiết</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+<section class="section dashboard">
+
+<div>
+    <dl class="row">
+        <div class="row">
+            <div class="col-md-4">
+                Mã Hóa Đơn: @Model.MaHd
+            </div>
+            <div class="col-md-4">
+                    Ngày tạo: @Model.Ngay
+
+            </div>   
+            <div class="col-md-4">
+                    @if (Model.TrangThai == 0)
+                    {
+                        <text>Chưa xác nhận</text>
+                    }
+                    else if (Model.TrangThai == 1)
+                    {
+                        <text>Xác nhận</text>
+                    }
+                    else if (Model.TrangThai == 2)
+                    {
+                        <text>Đang giao hàng</text>
+                    }
+                    else if (Model.TrangThai == 3)
+                    {
+                        <text>Đã giao hàng</text>
+                    }
+                    else if (Model.TrangThai == 4)
+                    {
+                        <text>Đơn hàng đã bị hủy bởi khách hàng</text>
+                    }
+                    else if (Model.TrangThai == 5)
+                    {
+                        <text>Đơn hàng đã bị hủy bởi cửa hàng</text>
+                    }
+                </div>
+        </div>
+            <div class="row">
+                <div class="col-md-4">
+                    Khách hàng: @Model.MaKhNavigation.Ten
+                </div>
+                <div class="col-md-4">
+                    Điện thoại: @Model.MaKhNavigation.DienThoai
+                </div>
+                <div class="col-md-4">
+                    Email: @Model.MaKhNavigation.Email
+                </div>
+            </div>
+            <div class="row">
+                <div class="justify-content-center">
+                    <table class="table table-responsive table-hover">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>STT</th>
+                                <th>Tên sản phẩm</th>
+                                <th>Số lượng</th>
+                                <th>Đơn giá</th>
+                                <th>Thành tiền</th                      
+                                  <th></th>
+                                  <th></th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int stt = 1;
+                            }
+
+                            @foreach (var item in Model.Cthoadons)
+                            {
+                                <tr>
+                                    <td>@(stt++)</td>
+                                    <td>@(item.MaMhNavigation.Ten)</td>
+                                    <td>@item.Solung</td>
+                                    <td>@item.DonGia.ToString("N0") đ</td>
+                                    <td>@item.ThanhTien.ToString("N0") đ</td>
+                                     <td>
+                                         <a asp-action="Edit" asp-controller="Cthoadons" asp-route-id="@item.MaCthd" class="btn btn-outline-info"><i class="bi bi-pencil-square"></i></a>
+                                     </td>
+                                     <td>
+                                         <a asp-action="Delete" asp-controller="Cthoadons" asp-route-id="@item.MaCthd" class="btn btn-outline-danger"><i class="bi bi-trash"></i></a>
+                                     </td>
+                                </tr>
+                            }
+                            <tr>
+                                <td colspan="4">Tổng tiền: </td>
+                                <td colspan="1" class="text-danger"> @Model.TongTien.ToString("N0") đ</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.MaHd">Chỉnh sửa</a> |
+    <a asp-action="Index">Quay về danh sách</a>
+</div>
+</section>

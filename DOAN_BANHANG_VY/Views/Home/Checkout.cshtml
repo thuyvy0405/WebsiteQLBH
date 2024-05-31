@@ -1,0 +1,146 @@
+﻿@model List<DOAN_BANHANG_VY.DTO.CartItems>
+<br />
+<h3 class="text-danger">Vui lòng kiểm tra thông tin trước khi lưu đơn hàng</h3>
+<div class="row">
+    <div class="col-md-4 text-info">
+        <h4>Thông tin khách hàng</h4>
+        <form asp-action="CreateBill" asp-controller="home">
+
+            <input type="text" class="form-control mb-1" name="hoten" placeholder="Nhập họ tên..."/>
+
+            <input type="email" class="form-control mb-1" name="email" placeholder="Nhập địa chỉ Email..." />
+
+            <input type="number" class="form-control mb-1" name="sdt" placeholder="Nhập số điện thoại..." />
+
+            
+            <div class="justify-content-center">
+        
+                <select class="form-select mb-1" id="city" name="tinhthanh">
+                    <option value="" selected>Chọn tỉnh thành</option>
+                </select>
+                <select class="form-select mb-1" id="district" name="quanhuyen">
+                    <option value="" selected>Chọn quận huyện</option>
+                </select>
+                <select class="form-select mb-1 " id="ward" name="phuongxa">
+                    <a href="d:\hk7\aspnet\thuchanh\qlbtbd\qlbtbd\views\home\checkout.cshtml">d:\hk7\aspnet\thuchanh\qlbtbd\qlbtbd\views\home\checkout.cshtml</a>
+                    <a href="d:\hk7\aspnet\thuchanh\qlbtbd\qlbtbd\views\home\register.cshtml">d:\hk7\aspnet\thuchanh\qlbtbd\qlbtbd\views\home\register.cshtml</a>
+                    <option value="" selected>Chọn phường xã</option>
+                </select>
+
+                <input class="form-control" type="text" id="diachichitiet" placeholder="Số nhà, đường,..." />
+                <input id="result" name="diachi" value="" />
+            </div>
+
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" referrerpolicy="no-referrer"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+            <script>
+                const host = "https://provinces.open-api.vn/api/";
+                var callAPI = (api) => {
+                    return axios.get(api)
+                        .then((response) => {
+                            renderData(response.data, "city");
+                        });
+                }
+                callAPI('https://provinces.open-api.vn/api/?depth=1');
+                var callApiDistrict = (api) => {
+                    return axios.get(api)
+                        .then((response) => {
+                            renderData(response.data.districts, "district");
+                        });
+                }
+                var callApiWard = (api) => {
+                    return axios.get(api)
+                        .then((response) => {
+                            renderData(response.data.wards, "ward");
+                        });
+                }
+
+                var renderData = (array, select) => {
+                    let row = '<option disabled value="">Chọn tỉnh thành</option>';
+                    array.forEach(element => {
+                        row += `<option data-id="${element.code}" value="${element.name}" >${element.name}</option>`;
+                    });
+                    document.querySelector("#" + select).innerHTML = row;
+                }
+
+
+                $("#city").change(() => {
+                    callApiDistrict(host + "p/" + $("#city").find(':selected').data('id') + "?depth=2");
+                    printResult();
+                });
+                $("#district").change(() => {
+                    callApiWard(host + "d/" + $("#district").find(':selected').data('id') + "?depth=2");
+                    printResult();
+                });
+                $("#ward").change(() => {
+                    printResult();
+                })
+                $("#diachichitiet").on('input', () => {
+                    printResult();
+                });
+
+                var printResult = () => {
+                    if ($("#district").find(':selected').data('id') != "" && $("#city").find(':selected').data('id') != "" &&
+                        $("#ward").find(':selected').data('id') != "") {
+                        let result = $("#city option:selected").text() +
+                            ", " + $("#district option:selected").text() + ", " +
+                            $("#ward option:selected").text() + ", " + $("#diachichitiet").val()
+                        $("#result").text(result)
+                    }
+                }
+            </script>
+            <input type="submit" class="btn btn-success mt-2" value="Lưu đơn hàng" />
+        </form>
+    </div>
+    <div class="col-md-8">
+        <h4 class="text-info">Thông tin đơn hàng</h4>
+        <form>
+            @if (Model.Count > 0)
+            {
+                int stt = 1;
+                int thanhtien = 0;
+                int tongtien = 0;
+
+                <table class="table" style="background-color: #00FFFF;">
+                    <tr class="bg-opacity-100">
+                        <th>STT</th>
+                        <th>Tên hàng</th>
+                        <th>Giá bán</th>
+                        <th>Số lượng</th>
+                        <th>Thành tiền</th>
+                    </tr>
+                    @foreach (var i in Model)
+                    {
+                        thanhtien = i.Mathang.GiaBan * i.soluong;
+                        tongtien += thanhtien;
+                        <tr>
+                            <td>
+                                @(stt++)
+                            </td>
+                            <td>
+                                @(i.Mathang.GiaBan.ToString("n0")) VNĐ
+                            </td>
+                            <td>
+                                <form asp-action="UpdateItem" method="post">
+                                    <div class="row">
+                                        <div class="col">
+                                            <input name="id" type="hidden" asp-for="@(i.Mathang.MaMh)" />
+                                            <input name="quantity" type="number" asp-for="@(i.soluong)" class="form-control" disabled />
+                                        </div>
+                                    </div>
+                                </form>
+                            </td>
+                            <td>
+                                @(thanhtien.ToString("n0")) VNĐ
+                            </td>
+                        </tr>
+                    }
+
+                    <tr>
+                        <td colspan="5" class="text-end fw-bold"> Thành tiền <strong class="text-danger">@(tongtien.ToString("n0")) VNĐ</strong></td>
+                    </tr>
+                </table>
+            }
+        </form>
+    </div>
+</div>

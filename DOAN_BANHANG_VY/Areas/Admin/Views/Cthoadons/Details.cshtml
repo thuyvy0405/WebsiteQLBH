@@ -1,0 +1,55 @@
+﻿@model DOAN_BANHANG_VY.Models.Cthoadon
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="pagetitle">
+    <h1>Xem chi tiết</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="index">Chi tiết hóa đơn</a></li>
+            <li class="breadcrumb-item active">Xem chi tiết</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+<section class="section dashboard">
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.DonGia)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.DonGia)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Solung)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Solung)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ThanhTien)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ThanhTien)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.MaHdNavigation)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.MaHdNavigation.MaHd)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.MaMhNavigation)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.MaMhNavigation.MaMh)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.MaCthd">Chỉnh sửa</a> |
+        <a asp-action="Details" asp-controller="hoadons" asp-route-id="@Model.MaHd">Quay lại danh sách</a>
+    </div>
+</section>

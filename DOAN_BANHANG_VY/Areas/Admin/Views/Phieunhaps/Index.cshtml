@@ -1,0 +1,85 @@
+﻿@model IEnumerable<DOAN_BANHANG_VY.Models.Phieunhap>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="pagetitle">
+    <h1>Danh sách</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="index">Phiếu nhập</a></li>
+            <li class="breadcrumb-item active">Danh sách</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+<section class="section dashboard">
+
+<p>
+    <a class="btn btn-info" asp-action="Create">Thêm mới</a>
+</p>
+<section class="section">
+    <div class="row">
+        <div class="col-lg-12">
+
+            <div class="card">
+                <div class="card-body">
+                    <!-- Table with stripped rows -->
+                    <table class="table datatable">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.NgayNhap)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.TongTien)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.GhiChu)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.MaNcuNavigation.Ten)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.MaNvNavigation.Ten)
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.NgayNhap)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.TongTien)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.GhiChu)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.MaNcuNavigation.Ten)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.MaNvNavigation.Ten)
+                                    </td>
+                                    <td>
+                                            <a class="btn btn-info" asp-action="Edit" asp-route-id="@item.SoPhieu"><i class="bi bi-pencil-square"></i></a> |
+                                            <a class="btn btn-success" asp-action="Details" asp-route-id="@item.SoPhieu"><i class="bi bi-eye-fill"></i></a> |
+                                            <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.SoPhieu"><i class="bi bi-trash"></i></a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <!-- End Table with stripped rows -->
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

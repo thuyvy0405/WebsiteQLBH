@@ -1,0 +1,64 @@
+﻿@model DOAN_BANHANG_VY.Models.Hoadon
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="pagetitle">
+    <h1>Cập nhật</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="index">Hóa đơn</a></li>
+            <li class="breadcrumb-item active">Cập nhật</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+<section class="section dashboard">
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="MaHd" />
+            <div class="form-group">
+                <label asp-for="Ngay" class="control-label"></label>
+                <input asp-for="Ngay" class="form-control" />
+                <span asp-validation-for="Ngay" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TongTien" class="control-label"></label>
+                <input asp-for="TongTien" class="form-control" />
+                <span asp-validation-for="TongTien" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaKh" class="control-label"></label>
+                <select asp-for="MaKh" class="form-control" asp-items="ViewBag.MaKh"></select>
+                <span asp-validation-for="MaKh" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TrangThai" class="control-label"></label>
+                    <label asp-for="TrangThai" class="control-label"></label>
+                    <select asp-for="TrangThai" class="form-control">
+                        <option value="0">Chưa xác nhận</option>
+                        <option value="1">Xác nhận</option>
+                        <option value="2">Đang giao hàng</option>
+                        <option value="3">Đã giao hàng</option>
+                        <option value="4">Đơn hàng đã bị hủy bởi khách hàng</option>
+                        <option value="5">Đơn hàng đã bị hủy bởi cửa hàng</option>
+                    </select>
+                <span asp-validation-for="TrangThai" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Lưu" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Quay về danh sách</a>
+</div>
+</section>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,65 @@
+﻿@model IEnumerable<Mathang>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div>
+    <form asp-controller="Home" asp-action="ProductsByName">
+        <table>
+            <tr>
+                <td>
+                    Từ Khóa: <input class="form-control-sm" type="text" name="keyword" />
+                </td>
+                <td>
+                    <input class="btn btn-info" type="submit" value="Tìm" />
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<h1>Danh Sách Sản Phẩm</h1>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-sm-3 d-flex">
+            <div class="card text-center m-2 shadow">
+                @if (item.GiaBan != item.GiaGoc)
+                {
+                    <!-- Sale badge-->
+                    <div class="badge bg-danger text-white position-absolute" style="top: -0.5rem; right: -0.5rem">Giảm Giá</div>
+                }
+                <div class="card-header bg-info text-white">
+                    <a asp-controller="Home" asp-action="ProductsByManufacturer" asp-route-DM="@item.MaDmNavigation.Ten" class="text-decoration-none">
+                        <h5>
+                            @Html.DisplayFor(modelItem => item.MaDmNavigation.Ten)
+                        </h5>
+                    </a>
+
+                </div>
+                <div class="card-body">
+                    <a asp-action="Details" asp-route-id="@item.MaMh">
+                        <img src="~/images/sanpham/@item.HinhAnh" style="max-width:100%" />
+                    </a>
+                    <div>
+                        @if (item.GiaBan != item.GiaGoc)
+                        {
+                            <span class="text-muted text-decoration-line-through"><strong>Giá góc: @item.GiaGoc</strong></span>
+                        }
+                    </div>
+                    <span class="text-danger"><strong> Giá bán: @item.GiaBan</strong></span>
+                </div>
+                <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                    <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Chọn Mua</a></div>
+                </div>
+                <div class="card-footer bg-light">
+                    <a asp-action="Details" asp-route-id="@item.MaMh">
+                        <strong>@Html.DisplayFor(modelItem => item.Ten)</strong>
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
